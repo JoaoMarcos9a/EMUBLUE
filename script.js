@@ -1,95 +1,148 @@
+// --- ESTADO DO SISTEMA ---
+const emulatorState = {
+    isPoweredOn: true,
+    installedApps: ['Settings', 'Browser'],
+    currentScreen: 'home'
+};
+
+// --- ELEMENTOS DO DOM ---
+const screenContent = document.getElementById('screen-content');
 const apkInput = document.getElementById('apk-file-input');
 const uploadStatus = document.getElementById('upload-status');
-const progressText = document.getElementById('progress');
-const btnInstall = document.getElementById('btn-install-real');
+const progressBar = document.getElementById('progress-bar');
+const modal = document.getElementById('install-modal');
 
-// Função para iniciar a instalação real
+// --- INICIALIZAÇÃO ---
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("EMUBLUE: Sistema Inicializado.");
+    renderHome();
+});
+
+// --- FUNÇÕES DE CONTROLE ---
+
+function togglePower() {
+    emulatorState.isPoweredOn = !emulatorState.isPoweredOn;
+    screenContent.style.opacity = emulatorState.isPoweredOn ? "1" : "0";
+}
+
+function openModal() {
+    modal.style.display = 'flex';
+}
+
+function closeModal() {
+    modal.style.display = 'none';
+    apkInput.value = ""; // Limpa o input
+    uploadStatus.style.display = 'none';
+    progressBar.style.width = '0%';
+}
+
+// --- LÓGICA DE INSTALAÇÃO (O CORAÇÃO) ---
+
 async function startInstallation() {
-    const file = apkInput.target ? apkInput.target.files[0] : apkInput.files[0];
+    const file = apkInput.files[0];
 
     if (!file) {
-        alert("Por favor, selecione um arquivo .apk primeiro!");
+        alert("Selecione um arquivo .apk primeiro!");
         return;
     }
 
-    if (!file.name.endsWith('.apk')) {
-        alert("O arquivo selecionado não é um APK válido!");
+    if (!file.name.toLowerCase().endsWith('.apk')) {
+        alert("Erro: Selecione um arquivo com extensão .apk");
         return;
     }
 
-    // 1. Simular Processo de Upload e Parsing de Arquivo
-    btnInstall.disabled = true;
+    // Iniciar Simulação de Upload
     uploadStatus.style.display = 'block';
-    
     let progress = 0;
+    
     const interval = setInterval(() => {
-        progress += Math.floor(Math.random() * 15);
+        progress += Math.floor(Math.random() * 15) + 5;
+        
         if (progress >= 100) {
             progress = 100;
             clearInterval(interval);
-            finalizeInstallation(file.name);
+            finalizarInstalacao(file.name);
         }
-        progressText.innerText = `${progress}%`;
-    }, 300);
+        
+        progressBar.style.width = `${progress}%`;
+    }, 250);
 }
 
-// 2. Simular a "Instalação" no Sistema Virtual
-function finalizeInstallation(fileName) {
-    const appName = fileName.replace('.apk', '').replace(/[-_]/g, ' ');
+function finalizarInstalacao(nomeArquivo) {
+    const nomeApp = nomeArquivo.replace('.apk', '').replace(/[-_]/g, ' ');
     
-    // Adiciona o app ao estado do sistema
-    emulatorState.installedApps.push(appName);
+    // Adiciona ao sistema
+    emulatorState.installedApps.push(nomeApp);
     
-    // Feedback Visual de Sucesso
-    alert(`Sucesso! O aplicativo "${appName}" foi instalado no ambiente virtual.`);
+    alert(`Sucesso! ${nomeApp} instalado no ambiente virtual.`);
     
-    // Fecha o modal e limpa
     closeModal();
-    btnInstall.disabled = false;
-    uploadStatus.style.display = 'none';
-    progressText.innerText = '0%';
-    
-    // Atualiza a interface do emulador
-    renderHome(); 
+    renderHome(); // Atualiza a tela inicial com o novo app
 }
 
-// 3. Função de Execução do App (Onde a mágica acontece)
+// --- RENDERIZAÇÃO DA INTERFACE ---
+
+function renderHome() {
+    if (!emulatorState.isPoweredOn) return;
+
+    emulatorState.currentScreen = 'home';
+    
+    screenContent.innerHTML = `
+        <div class="android-ui">
+            <div class="status-bar">
+                <span>12:45</span>
+                <div class="icons">📶 🔋</div>
+            </div>
+            <div class="app-grid" id="app-grid"></div>
+        </div>
+    `;
+
+    const grid = document.getElementById('app-grid');
+    
+    // Renderiza apps instalados
+    emulatorState.installedApps.forEach(app => {
+        const appDiv = document.createElement('div');
+        appDiv.className = 'app-icon';
+        appDiv.onclick = () => launchApp(app);
+        appDiv.innerHTML = `
+            <div class="icon-img" style="background: linear-gradient(45deg, #3498db, #8e44ad);">🚀</div>
+            <span>${app}</span>
+        `;
+        grid.appendChild(appDiv);
+    });
+}
+
 function launchApp(appName) {
     if (!emulatorState.isPoweredOn) return;
 
-    // Aqui simulamos o carregamento do ambiente de execução
-    // Em um sistema real, isso chamaria um servidor WebRTC ou um WebAssembly Container
+    // Simula a tela de carregamento do App
     screenContent.innerHTML = `
         <div class="android-ui app-runtime">
             <div class="status-bar">
                 <span>${appName}</span>
-                <button onclick="goHome()" class="btn-close-app">X</button>
+                <button class="btn-close-app" onclick="goHome()">X</button>
             </div>
             <div class="app-container-real">
-                <div class="app-loading-screen">
+                <div class="loading-screen">
                     <div class="spinner"></div>
-                    <p>Iniciando Máquina Virtual...</p>
-                    <p style="font-size: 10px; color: #555;">Configurando Sandbox de Segurança...</p>
+                    <p>Iniciando ambiente...</p>
                 </div>
             </div>
         </div>
     `;
 
-    // Simula o tempo de "boot" do app
+    // Simula o tempo de boot do app
     setTimeout(() => {
-        const appContainer = document.querySelector('.app-container-real');
-        appContainer.innerHTML = `
-            <div class="app-content-real">
-                <div class="app-header"></div>
-                <div class="app-body">
-                    <img src="https://via.placeholder.com/150/3498db/ffffff?text=${appName}" style="border-radius: 20px; margin-bottom: 20px;">
-                    <h3>${appName}</h3>
-                    <p>Ambiente de execução virtualizado pronto.</p>
-                    <button class="btn-action" onclick="alert('Interface de app simulada!')">Abrir Interface</button>
-                </div>
+        const container = document.querySelector('.app-container-real');
+        container.innerHTML = `
+            <div class="app-content">
+                <div class="app-icon-large" style="font-size: 50px;">📱</div>
+                <h2 style="margin-top:20px;">${appName}</h2>
+                <p style="color: #888; font-size: 14px;">Ambiente Virtualizado Ativo</p>
+                <button class="btn-action" onclick="alert('Interface de ${appName} em execução!')">Abrir App</button>
             </div>
         `;
-    }, 3000);
+    }, 2500);
 }
 
 function goHome() {
