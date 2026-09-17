@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepHat Android Emulator Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar de Controle -->
+        <aside class="sidebar">
+            <div class="logo">DEEP<span>HAT</span></div>
+            <nav class="menu">
+                <button class="menu-item active">Dashboard</button>
+                <button class="menu-item">Instalar APK</button>
+                <button class="menu-item">Configurações</button>
+                <button class="menu-item">Captura de Tela</button>
+            </nav>
+            <div class="status-panel">
+                <p>CPU: <span id="cpu-usage">12%</span></p>
+                <p>RAM: <span id="ram-usage">1.2GB</span></p>
+            </div>
+        </aside>
+
+        <!-- Área Principal de Emulação -->
+        <main class="emulator-workspace">
+            <header class="top-bar">
+                <div class="device-selector">
+                    <label>Dispositivo:</label>
+                    <select id="device-model">
+                        <option value="pixel-6">Pixel 6 (1080x2400)</option>
+                        <option value="galaxy-s21">Galaxy S21 (1080x2340)</option>
+                        <option value="tablet">Tablet Pro (1600x2560)</option>
+                    </select>
+                </div>
+                <button class="btn-power" onclick="togglePower()">Power</button>
+            </header>
+
+            <div class="emulator-viewport">
+                <div class="phone-body" id="phone-body">
+                    <div class="camera-hole"></div>
+                    <div class="screen-content" id="screen-content">
+                        <div class="android-ui">
+                            <div class="status-bar">
+                                <span>12:45</span>
+                                <div class="icons">📶 🔋</div>
+                            </div>
+                            <div class="app-grid" id="app-grid">
+                                <!-- Apps serão "instalados" aqui -->
+                                <div class="app-icon" onclick="launchApp('Settings')">
+                                    <div class="icon-img">⚙️</div>
+                                    <span>Settings</span>
+                                </div>
+                                <div class="app-icon" onclick="launchApp('Browser')">
+                                    <div class="icon-img">🌐</div>
+                                    <span>Browser</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Instalação -->
+    <div class="modal" id="install-modal">
+        <div class="modal-content">
+            <h3>Instalar Novo APK</h3>
+            <input type="text" id="apk-name" placeholder="Nome do App">
+            <input type="color" id="apk-color" value="#3498db">
+            <button onclick="installApp()">Instalar</button>
+            <button onclick="closeModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
