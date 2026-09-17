@@ -1,18 +1,70 @@
-<!-- Modal de Instalação Real -->
-<div class="modal" id="install-modal">
-    <div class="modal-content">
-        <h3>Instalador de APK</h3>
-        <p style="font-size: 12px; color: #888;">Selecione um arquivo .apk do seu dispositivo</p>
-        
-        <input type far-field="false" type="file" id="apk-file-input" accept=".apk" style="margin-bottom: 20px;">
-        
-        <div id="upload-status" style="display:none; font-size: 14px; color: var(--accent);">
-            Processando pacote... <span id="progress">0%</span>
-        </div>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMUBLUE | Android Virtual Emulator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar de Controle -->
+        <aside class="sidebar">
+            <div class="logo">EMU<span>BLUE</span></div>
+            <nav class="menu">
+                <button class="menu-item active">Dashboard</button>
+                <button class="menu-item" onclick="openModal()">Instalar APK</button>
+                <button class="menu-item">Configurações</button>
+            </nav>
+            <div class="status-panel">
+                <p>CPU: <span id="cpu-usage">15%</span></p>
+                <p>RAM: <span id="ram-usage">1.4GB</span></p>
+            </div>
+        </aside>
 
-        <div class="modal-buttons">
-            <button onclick="startInstallation()" id="btn-install-real">Instalar Agora</button>
-            <button onclick="closeModal()">Cancelar</button>
+        <!-- Área Principal -->
+        <main class="emulator-workspace">
+            <header class="top-bar">
+                <div class="device-info">
+                    <span id="device-name">Pixel 6 Pro (Simulado)</span>
+                </div>
+                <button class="btn-power" onclick="togglePower()">Power</button>
+            </header>
+
+            <div class="emulator-viewport">
+                <div class="phone-body" id="phone-body">
+                    <div class="camera-hole"></div>
+                    <div class="screen-content" id="screen-content">
+                        <!-- O conteúdo da tela será gerado via JS -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Instalação -->
+    <div class="modal" id="install-modal">
+        <div class="modal-content">
+            <h3>Instalador de APK</h3>
+            <p>Selecione o arquivo do seu dispositivo</p>
+            
+            <input type="file" id="apk-file-input" accept=".apk" class="custom-file-input">
+            
+            <div id="upload-status" style="display:none;">
+                <p>Instalando pacote...</p>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn-install" onclick="startInstallation()">Instalar Agora</button>
+                <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+            </div>
         </div>
     </div>
-</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
